@@ -1,0 +1,134 @@
+
+--
+-- creat schema for chatting application
+--
+
+CREATE SCHEMA `chatting` ;
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE `chatting`.`user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(45) NOT NULL,
+  `last_name` VARCHAR(45) NULL,
+  `user_role` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(90) NOT NULL,
+  `password` VARCHAR(90) NOT NULL,
+  `phone_number` VARCHAR(10) NULL,
+  PRIMARY KEY (`id`));
+
+--
+-- Table structure for table `notification`
+--
+
+CREATE TABLE `chatting`.`notification` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `notification_sender_id` INT NOT NULL,
+  `notification_receiver_id` INT NOT NULL,
+  `notification_text` VARCHAR(200) NOT NULL,
+  `notification_type` VARCHAR(45) NOT NULL,
+  `notification_status` VARCHAR(45) NOT NULL,
+  `notification_date` DATE NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `notification_sender_id` (`notification_sender_id` ASC),
+  INDEX `notification_receiver_id` (`notification_receiver_id` ASC),
+  CONSTRAINT `notification_sender_id_fk`
+    FOREIGN KEY (`notification_sender_id`)
+    REFERENCES `chatting`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `notification_receiver_id_fk`
+    FOREIGN KEY (`notification_receiver_id`)
+    REFERENCES `chatting`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+
+--
+-- Table structure for table `group`
+--
+
+CREATE TABLE `chatting`.`group` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `admin_id` INT NOT NULL,
+  `name` VARCHAR(90) NOT NULL,
+  `date_created` DATE NOT NULL,
+  `group_description` VARCHAR(150) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `admin_id` (`admin_id` ASC),
+  CONSTRAINT `admin_id_fk`
+    FOREIGN KEY (`admin_id`)
+    REFERENCES `chatting`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+
+--
+-- Table structure for table `message`
+--
+
+CREATE TABLE `chatting`.`message` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `sender_id` INT NOT NULL,
+  `receiver_id` INT NOT NULL,
+  `message_text` VARCHAR(1000) NOT NULL,
+  `message_date` DATE NOT NULL,
+  `message_type` VARCHAR(45) NOT NULL,
+  `message_status` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `sender_id` (`sender_id` ASC),
+  INDEX `receiver_id` (`receiver_id` ASC),
+  CONSTRAINT `sender_id_fk`
+    FOREIGN KEY (`sender_id`)
+    REFERENCES `chatting`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `receiver_id_fk`
+    FOREIGN KEY (`receiver_id`)
+    REFERENCES `chatting`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+
+--
+-- Table structure for table `friendship`
+--
+
+CREATE TABLE `chatting`.`friendship` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `first_user_id` INT NOT NULL,
+  `second_user_id` INT NOT NULL,
+  `friendSip_date` DATE NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `first_user_id` (`first_user_id` ASC),
+  INDEX `second_user_id` (`second_user_id` ASC),
+  CONSTRAINT `first_user_id_fk`
+    FOREIGN KEY (`first_user_id`)
+    REFERENCES `chatting`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `second_user_id_fk`
+    FOREIGN KEY (`second_user_id`)
+    REFERENCES `chatting`.`user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+--
+-- Table structure for table `group members`
+--
+CREATE TABLE `chatting`.`group_members` (
+   `id` INT NOT NULL AUTO_INCREMENT,
+   `group_id` INT NOT NULL,
+   `user_id` INT NOT NULL,
+   `join_date` DATE NOT NULL,
+   PRIMARY KEY (`id`),
+    INDEX `group_id` (`group_id` ASC),
+    INDEX `user_id` (`user_id` ASC),
+      CONSTRAINT `group_id`
+      FOREIGN KEY (`group_id`)
+     REFERENCES `chatting`.`group` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+      CONSTRAINT `user_id`
+      FOREIGN KEY (`user_id`)
+      REFERENCES `chatting`.`user` (`id`)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE);
